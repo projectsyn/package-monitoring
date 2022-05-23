@@ -1,0 +1,89 @@
+applications:
+  - prometheus
+
+parameters:
+  pkg.monitoring:
+    prometheus:
+      ingress:
+        host: prometheus.example.com
+        annotations:
+          cert-manager.io/cluster-issuer: letsencrypt-production
+
+  components:
+    prometheus:
+      url: https://github.com/projectsyn/component-prometheus.git
+      version: oauth2-proxy
+
+  prometheus:
+    prometheusOperator:
+      installCRDs: false
+    namespaces:
+      syn-prometheus-infra: {}
+    secrets:
+      thanos-objectstorage:
+        metadata:
+          namespace: syn-prometheus-infra
+        stringData:
+          thanos:
+            type: S3
+            config:
+              bucket: '${cluster:name}-thanos'
+              endpoint: objects.lpg.cloudscale.ch
+              region: lpg
+              access_key: '?{vaultkv:${cluster:tenant}/${cluster:name}/prometheus-infra/s3_access_key}'
+              secret_key: '?{vaultkv:${cluster:tenant}/${cluster:name}/prometheus-infra/s3_secret_key}'
+      oauth2-proxy:
+        metadata:
+          namespace: syn-prometheus-infra
+        stringData:
+          # dd if=/dev/urandom bs=1 count=16 | base64
+          cookieSecret: '?{vaultkv:${cluster:tenant}/${cluster:name}/syn-prometheus-infra/oauth2_cookie_secret}'
+          clientSecret: '?{vaultkv:${cluster:tenant}/${cluster:name}/syn-prometheus-infra/oauth2_client_secret}'
+    addons:
+    - remove-securitycontext
+    - oauth2-proxy
+    instances:
+      infra:
+        common:
+          namespace: syn-prometheus-infra
+        prometheus:
+          enabled: true
+          config:
+            _oauth2Proxy:
+              ingress: ${pkg.monitoring:prometheus:ingress}
+              proxyEnv:
+                OAUTH2_PROXY_COOKIE_SECRET:
+                  secretKeyRef:
+                    name: oauth2-proxy
+                    key: cookieSecret
+                OAUTH2_PROXY_CLIENT_SECRET:
+                  secretKeyRef:
+                    name: oauth2-proxy
+                    key: clientSecret
+              proxyArgs:
+                "provider": keycloak-oidc
+                "provider-display-name": "VSHN Test Account"
+                "client-id": "syn-prometheus-infra"
+                "email-domain": vshn.net
+                "oidc-issuer-url": https://id.test.vshn.net/auth/realms/VSHN-main-dev-realm
+                "custom-sign-in-logo": https://handbook.vshn.ch/hb/_images/vshn_logo.png
+                "real-client-ip-header": X-Forwarded-For
+            thanos:
+              baseImage: 'quay.io/thanos/thanos'
+              version: v0.24.0
+              objectStorageConfig:
+                key: thanos
+                name: thanos-objectstorage
+          overrides:
+            prometheus:
+              spec:
+                retention: "3d"
+                storage:
+                  volumeClaimTemplate:
+                    apiVersion: "v1"
+                    kind: "PersistentVolumeClaim"
+                    spec:
+                      accessModes: ["ReadWriteOnce"]
+                      resources:
+                        requests:
+                          storage: "20Gi"

@@ -1,0 +1,6 @@
+classes:
+  - ..monitoring
+
+parameters:
+  pkg.monitoring:
+    domain: bbb.fooo.example.com
