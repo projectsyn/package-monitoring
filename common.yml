@@ -8,21 +8,21 @@ parameters:
         host: prometheus.example.com
         annotations:
           cert-manager.io/cluster-issuer: letsencrypt-production
-      proxyArgs:
+      proxy:
         provider: keycloak-oidc
-        provider-display-name: "VSHN Test Account"
-        client-id: "syn-prometheus-infra"
-        email-domain: vshn.net
-        oidc-issuer-url: https://id.test.vshn.net/auth/realms/VSHN-main-dev-realm
-        custom-sign-in-logo: https://handbook.vshn.ch/hb/_images/vshn_logo.png
+        provider-display-name: "Test Account"
+        client-id: syn-prometheus-infra-${cluster:name}
+        email-domain: example.com
+        oidc-issuer-url: https://id.example.com/auth/realms/example-realm
+        custom-sign-in-logo: https://example.com/logo.png
         real-client-ip-header: X-Forwarded-For
       thanos:
         objectStorageConfig:
           bucket: '${cluster:name}-thanos'
-          endpoint: objects.lpg.cloudscale.ch
-          region: lpg
-          access_key: '?{vaultkv:${cluster:tenant}/${cluster:name}/prometheus-infra/s3_access_key}'
-          secret_key: '?{vaultkv:${cluster:tenant}/${cluster:name}/prometheus-infra/s3_secret_key}'
+          endpoint: objects.example.com
+          region: eu-east
+          access_key: '?{vaultkv:${cluster:tenant}/${cluster:name}/syn-prometheus-infra/s3_access_key}'
+          secret_key: '?{vaultkv:${cluster:tenant}/${cluster:name}/syn-prometheus-infra/s3_secret_key}'
         
 
   components:
@@ -32,19 +32,19 @@ parameters:
 
   prometheus:
     namespaces:
-      syn-monitoring: {}
+      syn-prometheus-infra: {}
 
     secrets:
       thanos-objectstorage:
         metadata:
-          namespace: syn-monitoring
+          namespace: syn-prometheus-infra
         stringData:
           thanos:
             type: S3
             config: ${pkg.monitoring:prometheus:thanos:objectStorageConfig}
       oauth2-proxy:
         metadata:
-          namespace: syn-monitoring
+          namespace: syn-prometheus-infra
         stringData:
           # dd if=/dev/urandom bs=1 count=16 | base64
           cookieSecret: '?{vaultkv:${cluster:tenant}/${cluster:name}/syn-prometheus-infra/oauth2_cookie_secret}'
@@ -56,7 +56,7 @@ parameters:
     instances:
       infra:
         common:
-          namespace: syn-monitoring
+          namespace: syn-prometheus-infra
         prometheus:
           enabled: true
           config:
@@ -71,7 +71,7 @@ parameters:
                   secretKeyRef:
                     name: oauth2-proxy
                     key: clientSecret
-              proxyArgs: ${pkg.monitoring:prometheus:proxyArgs}
+              proxyArgs: ${pkg.monitoring:prometheus:proxy}
             thanos:
               baseImage: 'quay.io/thanos/thanos'
               version: v0.24.0

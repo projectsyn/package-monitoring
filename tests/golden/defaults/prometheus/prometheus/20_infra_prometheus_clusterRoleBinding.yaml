@@ -17,4 +17,4 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: prometheus-infra
-    namespace: syn-monitoring
+    namespace: syn-prometheus-infra

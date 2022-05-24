@@ -11,23 +11,23 @@ metadata:
     app.kubernetes.io/version: 2.29.1
     prometheus: infra
   name: infra
-  namespace: syn-monitoring
+  namespace: syn-prometheus-infra
 spec:
   alerting:
     alertmanagers:
       - apiVersion: v2
         name: alertmanager-alertmanager-infra
-        namespace: syn-monitoring
+        namespace: syn-prometheus-infra
         port: web
   containers:
     - args:
-        - --client-id=syn-prometheus-infra
-        - --custom-sign-in-logo=https://handbook.vshn.ch/hb/_images/vshn_logo.png
-        - --email-domain=vshn.net
+        - --client-id=syn-prometheus-infra-c-green-test-1234
+        - --custom-sign-in-logo=https://example.com/logo.png
+        - --email-domain=example.com
         - --http-address=0.0.0.0:4180
-        - --oidc-issuer-url=https://id.test.vshn.net/auth/realms/VSHN-main-dev-realm
+        - --oidc-issuer-url=https://id.example.com/auth/realms/example-realm
         - --provider=keycloak-oidc
-        - --provider-display-name=VSHN Test Account
+        - --provider-display-name=Test Account
         - --real-client-ip-header=X-Forwarded-For
         - --reverse-proxy=true
         - --silence-ping-logging=true

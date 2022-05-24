@@ -8,7 +8,7 @@ metadata:
     app.kubernetes.io/managed-by: commodore
     app.kubernetes.io/part-of: syn
   name: prometheus-infra
-  namespace: syn-monitoring
+  namespace: syn-prometheus-infra
 spec:
   rules:
     - host: prometheus.example.com
