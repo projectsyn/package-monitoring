@@ -12,7 +12,7 @@ metadata:
     prometheus: infra
     role: alert-rules
   name: prometheus-infra-thanos-sidecar-rules
-  namespace: syn-prometheus-infra
+  namespace: syn-monitoring
 spec:
   groups:
     - name: thanos-sidecar

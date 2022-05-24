@@ -8,20 +8,20 @@ metadata:
     app.kubernetes.io/managed-by: commodore
     app.kubernetes.io/part-of: syn
   name: prometheus-infra
-  namespace: syn-prometheus-infra
+  namespace: syn-monitoring
 spec:
   rules:
-    - host: bbb.fooo.example.com
+    - host: prometheus.example.com
       http:
         paths:
           - backend:
               service:
-                name: prometheus-infra
+                name: prometheus-infra-auth
                 port:
                   number: 4180
             path: /
             pathType: Prefix
   tls:
     - hosts:
-        - bbb.fooo.example.com
+        - prometheus.example.com
       secretName: prometheus-infra-tls

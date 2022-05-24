@@ -1,0 +1,12 @@
+classes:
+  - .common
+
+applications:
+  - prometheus
+
+parameters:
+  prometheus:
+    prometheusOperator:
+      installCRDs: false
+    addons:
+    - remove-securitycontext

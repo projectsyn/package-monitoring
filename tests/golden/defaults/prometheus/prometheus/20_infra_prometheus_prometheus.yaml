@@ -11,13 +11,13 @@ metadata:
     app.kubernetes.io/version: 2.29.1
     prometheus: infra
   name: infra
-  namespace: syn-prometheus-infra
+  namespace: syn-monitoring
 spec:
   alerting:
     alertmanagers:
       - apiVersion: v2
         name: alertmanager-alertmanager-infra
-        namespace: syn-prometheus-infra
+        namespace: syn-monitoring
         port: web
   containers:
     - args:
@@ -46,6 +46,10 @@ spec:
               name: oauth2-proxy
       image: quay.io/oauth2-proxy/oauth2-proxy:v7.2.1
       name: oauth2-proxy
+      resources:
+        requests:
+          cpu: 20m
+          memory: 100Mi
   enableFeatures: []
   externalLabels: {}
   image: quay.io/prometheus/prometheus:v2.29.1

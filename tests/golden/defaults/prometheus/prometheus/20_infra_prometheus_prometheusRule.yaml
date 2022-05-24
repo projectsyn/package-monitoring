@@ -12,7 +12,7 @@ metadata:
     prometheus: infra
     role: alert-rules
   name: prometheus-infra-prometheus-rules
-  namespace: syn-prometheus-infra
+  namespace: syn-monitoring
 spec:
   groups:
     - name: prometheus
@@ -29,7 +29,7 @@ spec:
             # https://www.robustperception.io/alerting-on-gauges-in-prometheus-2-0
             for details.
 
-            max_over_time(prometheus_config_last_reload_successful{job="prometheus-infra",namespace="syn-prometheus-infra"}[5m])
+            max_over_time(prometheus_config_last_reload_successful{job="prometheus-infra",namespace="syn-monitoring"}[5m])
             == 0
 
             '
@@ -46,9 +46,8 @@ spec:
           expr: "# Without min_over_time, failed scrapes could create false negatives,\
             \ see\n# https://www.robustperception.io/alerting-on-gauges-in-prometheus-2-0\
             \ for details.\n(\n  predict_linear(prometheus_notifications_queue_length{job=\"\
-            prometheus-infra\",namespace=\"syn-prometheus-infra\"}[5m], 60 * 30)\n\
-            >\n  min_over_time(prometheus_notifications_queue_capacity{job=\"prometheus-infra\"\
-            ,namespace=\"syn-prometheus-infra\"}[5m])\n)\n"
+            prometheus-infra\",namespace=\"syn-monitoring\"}[5m], 60 * 30)\n>\n  min_over_time(prometheus_notifications_queue_capacity{job=\"\
+            prometheus-infra\",namespace=\"syn-monitoring\"}[5m])\n)\n"
           for: 15m
           labels:
             severity: warning
@@ -61,9 +60,8 @@ spec:
             summary: Prometheus has encountered more than 1% errors sending alerts
               to a specific Alertmanager.
           expr: "(\n  rate(prometheus_notifications_errors_total{job=\"prometheus-infra\"\
-            ,namespace=\"syn-prometheus-infra\"}[5m])\n/\n  rate(prometheus_notifications_sent_total{job=\"\
-            prometheus-infra\",namespace=\"syn-prometheus-infra\"}[5m])\n)\n* 100\n\
-            > 1\n"
+            ,namespace=\"syn-monitoring\"}[5m])\n/\n  rate(prometheus_notifications_sent_total{job=\"\
+            prometheus-infra\",namespace=\"syn-monitoring\"}[5m])\n)\n* 100\n> 1\n"
           for: 15m
           labels:
             severity: warning
@@ -79,7 +77,7 @@ spec:
             # https://www.robustperception.io/alerting-on-gauges-in-prometheus-2-0
             for details.
 
-            max_over_time(prometheus_notifications_alertmanagers_discovered{job="prometheus-infra",namespace="syn-prometheus-infra"}[5m])
+            max_over_time(prometheus_notifications_alertmanagers_discovered{job="prometheus-infra",namespace="syn-monitoring"}[5m])
             < 1
 
             '
@@ -92,7 +90,7 @@ spec:
               {{$value | humanize}} reload failures over the last 3h.
             runbook_url: https://runbooks.prometheus-operator.dev/runbooks/prometheus/prometheustsdbreloadsfailing
             summary: Prometheus has issues reloading blocks from disk.
-          expr: 'increase(prometheus_tsdb_reloads_failures_total{job="prometheus-infra",namespace="syn-prometheus-infra"}[3h])
+          expr: 'increase(prometheus_tsdb_reloads_failures_total{job="prometheus-infra",namespace="syn-monitoring"}[3h])
             > 0
 
             '
@@ -105,7 +103,7 @@ spec:
               {{$value | humanize}} compaction failures over the last 3h.
             runbook_url: https://runbooks.prometheus-operator.dev/runbooks/prometheus/prometheustsdbcompactionsfailing
             summary: Prometheus has issues compacting blocks.
-          expr: 'increase(prometheus_tsdb_compactions_failed_total{job="prometheus-infra",namespace="syn-prometheus-infra"}[3h])
+          expr: 'increase(prometheus_tsdb_compactions_failed_total{job="prometheus-infra",namespace="syn-monitoring"}[3h])
             > 0
 
             '
@@ -119,10 +117,10 @@ spec:
             runbook_url: https://runbooks.prometheus-operator.dev/runbooks/prometheus/prometheusnotingestingsamples
             summary: Prometheus is not ingesting samples.
           expr: "(\n  rate(prometheus_tsdb_head_samples_appended_total{job=\"prometheus-infra\"\
-            ,namespace=\"syn-prometheus-infra\"}[5m]) <= 0\nand\n  (\n    sum without(scrape_job)\
+            ,namespace=\"syn-monitoring\"}[5m]) <= 0\nand\n  (\n    sum without(scrape_job)\
             \ (prometheus_target_metadata_cache_entries{job=\"prometheus-infra\",namespace=\"\
-            syn-prometheus-infra\"}) > 0\n  or\n    sum without(rule_group) (prometheus_rule_group_rules{job=\"\
-            prometheus-infra\",namespace=\"syn-prometheus-infra\"}) > 0\n  )\n)\n"
+            syn-monitoring\"}) > 0\n  or\n    sum without(rule_group) (prometheus_rule_group_rules{job=\"\
+            prometheus-infra\",namespace=\"syn-monitoring\"}) > 0\n  )\n)\n"
           for: 10m
           labels:
             severity: warning
@@ -133,7 +131,7 @@ spec:
               timestamp.
             runbook_url: https://runbooks.prometheus-operator.dev/runbooks/prometheus/prometheusduplicatetimestamps
             summary: Prometheus is dropping samples with duplicate timestamps.
-          expr: 'rate(prometheus_target_scrapes_sample_duplicate_timestamp_total{job="prometheus-infra",namespace="syn-prometheus-infra"}[5m])
+          expr: 'rate(prometheus_target_scrapes_sample_duplicate_timestamp_total{job="prometheus-infra",namespace="syn-monitoring"}[5m])
             > 0
 
             '
@@ -147,7 +145,7 @@ spec:
               order.
             runbook_url: https://runbooks.prometheus-operator.dev/runbooks/prometheus/prometheusoutofordertimestamps
             summary: Prometheus drops samples with out-of-order timestamps.
-          expr: 'rate(prometheus_target_scrapes_sample_out_of_order_total{job="prometheus-infra",namespace="syn-prometheus-infra"}[5m])
+          expr: 'rate(prometheus_target_scrapes_sample_out_of_order_total{job="prometheus-infra",namespace="syn-monitoring"}[5m])
             > 0
 
             '
@@ -162,15 +160,13 @@ spec:
             runbook_url: https://runbooks.prometheus-operator.dev/runbooks/prometheus/prometheusremotestoragefailures
             summary: Prometheus fails to send samples to remote storage.
           expr: "(\n  (rate(prometheus_remote_storage_failed_samples_total{job=\"\
-            prometheus-infra\",namespace=\"syn-prometheus-infra\"}[5m]) or rate(prometheus_remote_storage_samples_failed_total{job=\"\
-            prometheus-infra\",namespace=\"syn-prometheus-infra\"}[5m]))\n/\n  (\n\
-            \    (rate(prometheus_remote_storage_failed_samples_total{job=\"prometheus-infra\"\
-            ,namespace=\"syn-prometheus-infra\"}[5m]) or rate(prometheus_remote_storage_samples_failed_total{job=\"\
-            prometheus-infra\",namespace=\"syn-prometheus-infra\"}[5m]))\n  +\n  \
-            \  (rate(prometheus_remote_storage_succeeded_samples_total{job=\"prometheus-infra\"\
-            ,namespace=\"syn-prometheus-infra\"}[5m]) or rate(prometheus_remote_storage_samples_total{job=\"\
-            prometheus-infra\",namespace=\"syn-prometheus-infra\"}[5m]))\n  )\n)\n\
-            * 100\n> 1\n"
+            prometheus-infra\",namespace=\"syn-monitoring\"}[5m]) or rate(prometheus_remote_storage_samples_failed_total{job=\"\
+            prometheus-infra\",namespace=\"syn-monitoring\"}[5m]))\n/\n  (\n    (rate(prometheus_remote_storage_failed_samples_total{job=\"\
+            prometheus-infra\",namespace=\"syn-monitoring\"}[5m]) or rate(prometheus_remote_storage_samples_failed_total{job=\"\
+            prometheus-infra\",namespace=\"syn-monitoring\"}[5m]))\n  +\n    (rate(prometheus_remote_storage_succeeded_samples_total{job=\"\
+            prometheus-infra\",namespace=\"syn-monitoring\"}[5m]) or rate(prometheus_remote_storage_samples_total{job=\"\
+            prometheus-infra\",namespace=\"syn-monitoring\"}[5m]))\n  )\n)\n* 100\n\
+            > 1\n"
           for: 15m
           labels:
             severity: critical
@@ -184,9 +180,9 @@ spec:
           expr: "# Without max_over_time, failed scrapes could create false negatives,\
             \ see\n# https://www.robustperception.io/alerting-on-gauges-in-prometheus-2-0\
             \ for details.\n(\n  max_over_time(prometheus_remote_storage_highest_timestamp_in_seconds{job=\"\
-            prometheus-infra\",namespace=\"syn-prometheus-infra\"}[5m])\n- ignoring(remote_name,\
+            prometheus-infra\",namespace=\"syn-monitoring\"}[5m])\n- ignoring(remote_name,\
             \ url) group_right\n  max_over_time(prometheus_remote_storage_queue_highest_sent_timestamp_seconds{job=\"\
-            prometheus-infra\",namespace=\"syn-prometheus-infra\"}[5m])\n)\n> 120\n"
+            prometheus-infra\",namespace=\"syn-monitoring\"}[5m])\n)\n> 120\n"
           for: 15m
           labels:
             severity: critical
@@ -195,7 +191,7 @@ spec:
             description: Prometheus {{$labels.namespace}}/{{$labels.pod}} remote write
               desired shards calculation wants to run {{ $value }} shards for queue
               {{ $labels.remote_name}}:{{ $labels.url }}, which is more than the max
-              of {{ printf `prometheus_remote_storage_shards_max{instance="%s",job="prometheus-infra",namespace="syn-prometheus-infra"}`
+              of {{ printf `prometheus_remote_storage_shards_max{instance="%s",job="prometheus-infra",namespace="syn-monitoring"}`
               $labels.instance | query | first | value }}.
             runbook_url: https://runbooks.prometheus-operator.dev/runbooks/prometheus/prometheusremotewritedesiredshards
             summary: Prometheus remote write desired shards calculation wants to run
@@ -203,8 +199,8 @@ spec:
           expr: "# Without max_over_time, failed scrapes could create false negatives,\
             \ see\n# https://www.robustperception.io/alerting-on-gauges-in-prometheus-2-0\
             \ for details.\n(\n  max_over_time(prometheus_remote_storage_shards_desired{job=\"\
-            prometheus-infra\",namespace=\"syn-prometheus-infra\"}[5m])\n>\n  max_over_time(prometheus_remote_storage_shards_max{job=\"\
-            prometheus-infra\",namespace=\"syn-prometheus-infra\"}[5m])\n)\n"
+            prometheus-infra\",namespace=\"syn-monitoring\"}[5m])\n>\n  max_over_time(prometheus_remote_storage_shards_max{job=\"\
+            prometheus-infra\",namespace=\"syn-monitoring\"}[5m])\n)\n"
           for: 15m
           labels:
             severity: warning
@@ -214,7 +210,7 @@ spec:
               to evaluate {{ printf "%.0f" $value }} rules in the last 5m.
             runbook_url: https://runbooks.prometheus-operator.dev/runbooks/prometheus/prometheusrulefailures
             summary: Prometheus is failing rule evaluations.
-          expr: 'increase(prometheus_rule_evaluation_failures_total{job="prometheus-infra",namespace="syn-prometheus-infra"}[5m])
+          expr: 'increase(prometheus_rule_evaluation_failures_total{job="prometheus-infra",namespace="syn-monitoring"}[5m])
             > 0
 
             '
@@ -228,7 +224,7 @@ spec:
             runbook_url: https://runbooks.prometheus-operator.dev/runbooks/prometheus/prometheusmissingruleevaluations
             summary: Prometheus is missing rule evaluations due to slow rule group
               evaluation.
-          expr: 'increase(prometheus_rule_group_iterations_missed_total{job="prometheus-infra",namespace="syn-prometheus-infra"}[5m])
+          expr: 'increase(prometheus_rule_group_iterations_missed_total{job="prometheus-infra",namespace="syn-monitoring"}[5m])
             > 0
 
             '
@@ -243,7 +239,7 @@ spec:
             runbook_url: https://runbooks.prometheus-operator.dev/runbooks/prometheus/prometheustargetlimithit
             summary: Prometheus has dropped targets because some scrape configs have
               exceeded the targets limit.
-          expr: 'increase(prometheus_target_scrape_pool_exceeded_target_limit_total{job="prometheus-infra",namespace="syn-prometheus-infra"}[5m])
+          expr: 'increase(prometheus_target_scrape_pool_exceeded_target_limit_total{job="prometheus-infra",namespace="syn-monitoring"}[5m])
             > 0
 
             '
@@ -258,7 +254,7 @@ spec:
             runbook_url: https://runbooks.prometheus-operator.dev/runbooks/prometheus/prometheuslabellimithit
             summary: Prometheus has dropped targets because some scrape configs have
               exceeded the labels limit.
-          expr: 'increase(prometheus_target_scrape_pool_exceeded_label_limits_total{job="prometheus-infra",namespace="syn-prometheus-infra"}[5m])
+          expr: 'increase(prometheus_target_scrape_pool_exceeded_label_limits_total{job="prometheus-infra",namespace="syn-monitoring"}[5m])
             > 0
 
             '
@@ -271,7 +267,7 @@ spec:
               have failed to sync because invalid configuration was supplied.'
             runbook_url: https://runbooks.prometheus-operator.dev/runbooks/prometheus/prometheustargetsyncfailure
             summary: Prometheus has failed to sync targets.
-          expr: 'increase(prometheus_target_sync_failed_total{job="prometheus-infra",namespace="syn-prometheus-infra"}[30m])
+          expr: 'increase(prometheus_target_sync_failed_total{job="prometheus-infra",namespace="syn-monitoring"}[30m])
             > 0
 
             '
@@ -287,10 +283,9 @@ spec:
             summary: Prometheus encounters more than 3% errors sending alerts to any
               Alertmanager.
           expr: "min without (alertmanager) (\n  rate(prometheus_notifications_errors_total{job=\"\
-            prometheus-infra\",namespace=\"syn-prometheus-infra\",alertmanager!~``}[5m])\n\
+            prometheus-infra\",namespace=\"syn-monitoring\",alertmanager!~``}[5m])\n\
             /\n  rate(prometheus_notifications_sent_total{job=\"prometheus-infra\"\
-            ,namespace=\"syn-prometheus-infra\",alertmanager!~``}[5m])\n)\n* 100\n\
-            > 3\n"
+            ,namespace=\"syn-monitoring\",alertmanager!~``}[5m])\n)\n* 100\n> 3\n"
           for: 15m
           labels:
             severity: critical
