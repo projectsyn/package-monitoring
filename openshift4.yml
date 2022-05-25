@@ -1,9 +1,6 @@
 classes:
   - .common
 
-applications:
-  - prometheus
-
 parameters:
   prometheus:
     prometheusOperator:
