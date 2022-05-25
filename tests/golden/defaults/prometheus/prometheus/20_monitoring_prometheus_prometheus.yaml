@@ -21,13 +21,13 @@ spec:
         port: web
   containers:
     - args:
-        - --client-id=syn-monitoring-c-green-test-1234
+        - --client-id=syn_monitoring_c-green-test-1234_prometheus
         - --custom-sign-in-logo=https://example.com/logo.png
         - --email-domain=example.com
         - --http-address=0.0.0.0:4180
         - --oidc-issuer-url=https://id.example.com/auth/realms/example-realm
         - --provider=keycloak-oidc
-        - --provider-display-name=Test Account
+        - --provider-display-name=Keycloak
         - --real-client-ip-header=X-Forwarded-For
         - --reverse-proxy=true
         - --silence-ping-logging=true

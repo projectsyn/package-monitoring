@@ -15,8 +15,8 @@ parameters:
           cert-manager.io/cluster-issuer: letsencrypt-production
       proxy:
         provider: keycloak-oidc
-        provider-display-name: "Test Account"
-        client-id: syn-monitoring-${cluster:name}
+        provider-display-name: "Keycloak"
+        client-id: syn_monitoring_${cluster:name}_prometheus
         email-domain: example.com
         oidc-issuer-url: https://id.example.com/auth/realms/example-realm
         custom-sign-in-logo: https://example.com/logo.png
