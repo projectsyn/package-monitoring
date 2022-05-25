@@ -1,0 +1,99 @@
+= Parameters
+
+The parent key for all of the following parameters is `pkg.monitoring`.
+
+== `images`
+
+[horizontal]
+type:: dictionary
+
+Dictionary containing the container images directly used by this package.
+The dictionary doesn't contain images managed by included components
+
+
+== `prometheus`
+
+
+=== `prometheus.ingress.enabled`
+
+[horizontal]
+type:: boolean
+default:: `true`
+
+Whether to deploy an ingress for Prometheus.
+
+=== `prometheus.ingress.host`
+
+[horizontal]
+type:: string
+default:: `prometheus.example.com`
+
+The hostname of the ingress.
+
+=== `prometheus.ingress.annotations`
+
+[horizontal]
+type:: dictionary
+default::
+
+[source,yaml]
+----
+cert-manager.io/cluster-issuer: letsencrypt-production
+----
+
+=== `prometheus.ingress.tls.enabled`
+
+[horizontal]
+type:: boolean
+default:: `true`
+
+Whether to enable TLS for the ingress.
+
+=== `prometheus.ingress.tls.secretName`
+
+[horizontal]
+type:: string
+default:: `null`
+
+The name of the secret containing the TLS certificate.
+If left empty the name will be generated from the ingress name by appending `-tls`.
+
+
+=== `prometheus.proxy`
+
+[horizontal]
+type:: dictionary
+default::
+
+[source,yaml]
+----
+proxy:
+  provider: keycloak-oidc
+  provider-display-name: "Keycloak"
+  client-id: syn_monitoring_${cluster:name}_prometheus
+  email-domain: example.com
+  oidc-issuer-url: https://id.example.com/auth/realms/example-realm
+  custom-sign-in-logo: https://example.com/logo.png
+  real-client-ip-header: X-Forwarded-For
+----
+
+A dictionary of arguments to pass to the Oauth2 Proxy.
+
+=== `prometheus.thanos.objectStorageConfig`
+
+[horizontal]
+type:: dictionary
+default::
+
+[source,yaml]
+----
+objectStorageConfig:
+  bucket: '${cluster:name}-thanos'
+  endpoint: objects.example.com
+  region: eu-east
+  access_key: '?{vaultkv:${cluster:tenant}/${cluster:name}/syn-monitoring/prometheus/s3_access_key}'
+  secret_key: '?{vaultkv:${cluster:tenant}/${cluster:name}/syn-monitoring/prometheus/s3_secret_key}'
+----
+
+The Thanos sidecar S3 configuration.
+Consult the https://thanos.io/tip/thanos/storage.md/#s3[upsteam documentation] on the available options.
