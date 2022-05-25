@@ -20,6 +20,9 @@ spec:
     - name: grpc
       port: 10901
       targetPort: 10901
+    - name: rbac
+      port: 4181
+      targetPort: 4181
   selector:
     app: prometheus
     app.kubernetes.io/component: prometheus
