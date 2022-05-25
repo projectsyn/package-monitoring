@@ -23,7 +23,6 @@ parameters:
           region: eu-east
           access_key: '?{vaultkv:${cluster:tenant}/${cluster:name}/syn-monitoring/prometheus/s3_access_key}'
           secret_key: '?{vaultkv:${cluster:tenant}/${cluster:name}/syn-monitoring/prometheus/s3_secret_key}'
-        
 
   components:
     prometheus:
@@ -51,7 +50,7 @@ parameters:
           clientSecret: '?{vaultkv:${cluster:tenant}/${cluster:name}/syn-monitoring/prometheus/oauth2_client_secret}'
 
     addons:
-    - oauth2-proxy
+      - oauth2-proxy
 
     instances:
       monitoring:

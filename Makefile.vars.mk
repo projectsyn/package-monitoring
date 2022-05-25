@@ -25,7 +25,7 @@ ANTORA_PREVIEW_CMD ?= $(DOCKER_CMD) run --rm --publish 35729:35729 --publish 202
 
 
 COMMODORE_CMD  ?= $(DOCKER_CMD) $(DOCKER_ARGS) $(root_volume) docker.io/projectsyn/commodore:latest
-COMPILE_CMD    ?= $(COMMODORE_CMD) -d ./tmp package compile . $(commodore_args)
+COMPILE_CMD    ?= $(COMMODORE_CMD) package compile . $(commodore_args)
 
 instance ?= defaults
 test_instances = tests/defaults.yml

@@ -9,4 +9,4 @@ parameters:
     prometheusOperator:
       installCRDs: false
     addons:
-    - remove-securitycontext
+      - remove-securitycontext
