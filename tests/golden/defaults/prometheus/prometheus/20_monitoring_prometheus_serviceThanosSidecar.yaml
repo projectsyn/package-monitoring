@@ -9,9 +9,9 @@ metadata:
     app.kubernetes.io/name: prometheus
     app.kubernetes.io/part-of: kube-prometheus
     app.kubernetes.io/version: 2.29.1
-    prometheus: infra
-  name: prometheus-infra-thanos-sidecar
-  namespace: syn-prometheus-infra
+    prometheus: monitoring
+  name: prometheus-monitoring-thanos-sidecar
+  namespace: syn-monitoring
 spec:
   clusterIP: None
   ports:
@@ -25,4 +25,4 @@ spec:
     app.kubernetes.io/component: prometheus
     app.kubernetes.io/name: prometheus
     app.kubernetes.io/part-of: kube-prometheus
-    prometheus: infra
+    prometheus: monitoring

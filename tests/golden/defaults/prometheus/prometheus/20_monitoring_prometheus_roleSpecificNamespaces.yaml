@@ -8,7 +8,7 @@ items:
         app.kubernetes.io/name: prometheus
         app.kubernetes.io/part-of: kube-prometheus
         app.kubernetes.io/version: 2.29.1
-      name: prometheus-infra
+      name: prometheus-monitoring
       namespace: default
     rules:
       - apiGroups:
@@ -45,7 +45,7 @@ items:
         app.kubernetes.io/name: prometheus
         app.kubernetes.io/part-of: kube-prometheus
         app.kubernetes.io/version: 2.29.1
-      name: prometheus-infra
+      name: prometheus-monitoring
       namespace: kube-system
     rules:
       - apiGroups:
@@ -82,8 +82,8 @@ items:
         app.kubernetes.io/name: prometheus
         app.kubernetes.io/part-of: kube-prometheus
         app.kubernetes.io/version: 2.29.1
-      name: prometheus-infra
-      namespace: syn-prometheus-infra
+      name: prometheus-monitoring
+      namespace: syn-monitoring
     rules:
       - apiGroups:
           - ''

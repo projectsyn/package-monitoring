@@ -1,5 +1,5 @@
-apiVersion: policy/v1beta1
-kind: PodDisruptionBudget
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
 metadata:
   annotations:
     source: https://github.com/projectsyn/component-prometheus
@@ -9,13 +9,15 @@ metadata:
     app.kubernetes.io/name: prometheus
     app.kubernetes.io/part-of: kube-prometheus
     app.kubernetes.io/version: 2.29.1
-  name: prometheus-infra
-  namespace: syn-prometheus-infra
+  name: prometheus-monitoring
+  namespace: syn-monitoring
 spec:
-  minAvailable: 1
+  endpoints:
+    - interval: 30s
+      port: web
   selector:
     matchLabels:
       app.kubernetes.io/component: prometheus
       app.kubernetes.io/name: prometheus
       app.kubernetes.io/part-of: kube-prometheus
-      prometheus: infra
+      prometheus: monitoring

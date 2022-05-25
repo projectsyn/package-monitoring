@@ -8,16 +8,16 @@ items:
         app.kubernetes.io/name: prometheus
         app.kubernetes.io/part-of: kube-prometheus
         app.kubernetes.io/version: 2.29.1
-      name: prometheus-infra
+      name: prometheus-monitoring
       namespace: default
     roleRef:
       apiGroup: rbac.authorization.k8s.io
       kind: Role
-      name: prometheus-infra
+      name: prometheus-monitoring
     subjects:
       - kind: ServiceAccount
-        name: prometheus-infra
-        namespace: syn-prometheus-infra
+        name: prometheus-monitoring
+        namespace: syn-monitoring
   - apiVersion: rbac.authorization.k8s.io/v1
     kind: RoleBinding
     metadata:
@@ -26,16 +26,16 @@ items:
         app.kubernetes.io/name: prometheus
         app.kubernetes.io/part-of: kube-prometheus
         app.kubernetes.io/version: 2.29.1
-      name: prometheus-infra
+      name: prometheus-monitoring
       namespace: kube-system
     roleRef:
       apiGroup: rbac.authorization.k8s.io
       kind: Role
-      name: prometheus-infra
+      name: prometheus-monitoring
     subjects:
       - kind: ServiceAccount
-        name: prometheus-infra
-        namespace: syn-prometheus-infra
+        name: prometheus-monitoring
+        namespace: syn-monitoring
   - apiVersion: rbac.authorization.k8s.io/v1
     kind: RoleBinding
     metadata:
@@ -44,16 +44,16 @@ items:
         app.kubernetes.io/name: prometheus
         app.kubernetes.io/part-of: kube-prometheus
         app.kubernetes.io/version: 2.29.1
-      name: prometheus-infra
-      namespace: syn-prometheus-infra
+      name: prometheus-monitoring
+      namespace: syn-monitoring
     roleRef:
       apiGroup: rbac.authorization.k8s.io
       kind: Role
-      name: prometheus-infra
+      name: prometheus-monitoring
     subjects:
       - kind: ServiceAccount
-        name: prometheus-infra
-        namespace: syn-prometheus-infra
+        name: prometheus-monitoring
+        namespace: syn-monitoring
 kind: RoleBindingList
 metadata:
   annotations:

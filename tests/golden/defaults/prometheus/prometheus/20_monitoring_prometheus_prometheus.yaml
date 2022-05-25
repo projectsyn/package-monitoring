@@ -9,19 +9,19 @@ metadata:
     app.kubernetes.io/name: prometheus
     app.kubernetes.io/part-of: kube-prometheus
     app.kubernetes.io/version: 2.29.1
-    prometheus: infra
-  name: infra
-  namespace: syn-prometheus-infra
+    prometheus: monitoring
+  name: monitoring
+  namespace: syn-monitoring
 spec:
   alerting:
     alertmanagers:
       - apiVersion: v2
-        name: alertmanager-alertmanager-infra
-        namespace: syn-prometheus-infra
+        name: alertmanager-alertmanager-monitoring
+        namespace: syn-monitoring
         port: web
   containers:
     - args:
-        - --client-id=syn-prometheus-infra-c-green-test-1234
+        - --client-id=syn-monitoring-c-green-test-1234
         - --custom-sign-in-logo=https://example.com/logo.png
         - --email-domain=example.com
         - --http-address=0.0.0.0:4180
@@ -73,7 +73,7 @@ spec:
   retention: 3d
   ruleNamespaceSelector: {}
   ruleSelector: {}
-  serviceAccountName: prometheus-infra
+  serviceAccountName: prometheus-monitoring
   serviceMonitorNamespaceSelector: {}
   serviceMonitorSelector: {}
   storage:

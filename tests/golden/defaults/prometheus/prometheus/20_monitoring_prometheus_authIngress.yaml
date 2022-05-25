@@ -7,8 +7,8 @@ metadata:
   labels:
     app.kubernetes.io/managed-by: commodore
     app.kubernetes.io/part-of: syn
-  name: prometheus-infra
-  namespace: syn-prometheus-infra
+  name: prometheus-monitoring
+  namespace: syn-monitoring
 spec:
   rules:
     - host: prometheus.example.com
@@ -16,7 +16,7 @@ spec:
         paths:
           - backend:
               service:
-                name: prometheus-infra-auth
+                name: prometheus-monitoring-auth
                 port:
                   number: 4180
             path: /
@@ -24,4 +24,4 @@ spec:
   tls:
     - hosts:
         - prometheus.example.com
-      secretName: prometheus-infra-tls
+      secretName: prometheus-monitoring-tls

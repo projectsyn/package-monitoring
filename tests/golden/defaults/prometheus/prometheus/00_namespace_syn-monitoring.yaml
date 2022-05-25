@@ -3,5 +3,5 @@ kind: Namespace
 metadata:
   annotations: {}
   labels:
-    name: syn-prometheus-infra
-  name: syn-prometheus-infra
+    name: syn-monitoring
+  name: syn-monitoring

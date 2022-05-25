@@ -11,7 +11,7 @@ parameters:
       proxy:
         provider: keycloak-oidc
         provider-display-name: "Test Account"
-        client-id: syn-prometheus-infra-${cluster:name}
+        client-id: syn-monitoring-${cluster:name}
         email-domain: example.com
         oidc-issuer-url: https://id.example.com/auth/realms/example-realm
         custom-sign-in-logo: https://example.com/logo.png
@@ -21,8 +21,8 @@ parameters:
           bucket: '${cluster:name}-thanos'
           endpoint: objects.example.com
           region: eu-east
-          access_key: '?{vaultkv:${cluster:tenant}/${cluster:name}/syn-prometheus-infra/s3_access_key}'
-          secret_key: '?{vaultkv:${cluster:tenant}/${cluster:name}/syn-prometheus-infra/s3_secret_key}'
+          access_key: '?{vaultkv:${cluster:tenant}/${cluster:name}/syn-monitoring/prometheus/s3_access_key}'
+          secret_key: '?{vaultkv:${cluster:tenant}/${cluster:name}/syn-monitoring/prometheus/s3_secret_key}'
         
 
   components:
@@ -32,31 +32,31 @@ parameters:
 
   prometheus:
     namespaces:
-      syn-prometheus-infra: {}
+      syn-monitoring: {}
 
     secrets:
       thanos-objectstorage:
         metadata:
-          namespace: syn-prometheus-infra
+          namespace: syn-monitoring
         stringData:
           thanos:
             type: S3
             config: ${pkg.monitoring:prometheus:thanos:objectStorageConfig}
       oauth2-proxy:
         metadata:
-          namespace: syn-prometheus-infra
+          namespace: syn-monitoring
         stringData:
           # dd if=/dev/urandom bs=1 count=16 | base64
-          cookieSecret: '?{vaultkv:${cluster:tenant}/${cluster:name}/syn-prometheus-infra/oauth2_cookie_secret}'
-          clientSecret: '?{vaultkv:${cluster:tenant}/${cluster:name}/syn-prometheus-infra/oauth2_client_secret}'
+          cookieSecret: '?{vaultkv:${cluster:tenant}/${cluster:name}/syn-monitoring/prometheus/oauth2_cookie_secret}'
+          clientSecret: '?{vaultkv:${cluster:tenant}/${cluster:name}/syn-monitoring/prometheus/oauth2_client_secret}'
 
     addons:
     - oauth2-proxy
 
     instances:
-      infra:
+      monitoring:
         common:
-          namespace: syn-prometheus-infra
+          namespace: syn-monitoring
         prometheus:
           enabled: true
           config:

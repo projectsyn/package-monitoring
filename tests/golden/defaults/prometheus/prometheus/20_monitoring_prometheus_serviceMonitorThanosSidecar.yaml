@@ -9,9 +9,9 @@ metadata:
     app.kubernetes.io/name: prometheus
     app.kubernetes.io/part-of: kube-prometheus
     app.kubernetes.io/version: 2.29.1
-    prometheus: infra
+    prometheus: monitoring
   name: thanos-sidecar
-  namespace: syn-prometheus-infra
+  namespace: syn-monitoring
 spec:
   endpoints:
     - interval: 30s
@@ -20,4 +20,4 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/component: thanos-sidecar
-      prometheus: infra
+      prometheus: monitoring

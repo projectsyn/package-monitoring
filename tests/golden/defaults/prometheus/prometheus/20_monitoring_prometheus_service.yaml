@@ -9,17 +9,21 @@ metadata:
     app.kubernetes.io/name: prometheus
     app.kubernetes.io/part-of: kube-prometheus
     app.kubernetes.io/version: 2.29.1
-    prometheus: infra
-  name: prometheus-infra-auth
-  namespace: syn-prometheus-infra
+    prometheus: monitoring
+  name: prometheus-monitoring
+  namespace: syn-monitoring
 spec:
   ports:
     - name: web
-      port: 4180
-      targetPort: 4180
+      port: 9090
+      targetPort: web
+    - name: grpc
+      port: 10901
+      targetPort: 10901
   selector:
     app: prometheus
     app.kubernetes.io/component: prometheus
     app.kubernetes.io/name: prometheus
     app.kubernetes.io/part-of: kube-prometheus
-    prometheus: infra
+    prometheus: monitoring
+  sessionAffinity: ClientIP
