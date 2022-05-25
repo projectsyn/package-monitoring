@@ -1,0 +1,97 @@
+applications:
+  - prometheus
+
+parameters:
+  pkg.monitoring:
+    images:
+      thanos:
+        registry: quay.io
+        repository: thanos/thanos
+        tag: v0.24.0
+    prometheus:
+      ingress:
+        host: prometheus.example.com
+        annotations:
+          cert-manager.io/cluster-issuer: letsencrypt-production
+      proxy:
+        provider: keycloak-oidc
+        provider-display-name: "Keycloak"
+        client-id: syn_monitoring_${cluster:name}_prometheus
+        email-domain: example.com
+        oidc-issuer-url: https://id.example.com/auth/realms/example-realm
+        custom-sign-in-logo: https://example.com/logo.png
+        real-client-ip-header: X-Forwarded-For
+      thanos:
+        objectStorageConfig:
+          bucket: '${cluster:name}-thanos'
+          endpoint: objects.example.com
+          region: eu-east
+          access_key: '?{vaultkv:${cluster:tenant}/${cluster:name}/syn-monitoring/prometheus/s3_access_key}'
+          secret_key: '?{vaultkv:${cluster:tenant}/${cluster:name}/syn-monitoring/prometheus/s3_secret_key}'
+
+  components:
+    prometheus:
+      url: https://github.com/projectsyn/component-prometheus.git
+      version: v1.0.0
+
+  prometheus:
+    namespaces:
+      syn-monitoring: {}
+
+    secrets:
+      thanos-objectstorage:
+        metadata:
+          namespace: syn-monitoring
+        stringData:
+          thanos:
+            type: S3
+            config: ${pkg.monitoring:prometheus:thanos:objectStorageConfig}
+      oauth2-proxy:
+        metadata:
+          namespace: syn-monitoring
+        stringData:
+          # dd if=/dev/urandom bs=1 count=16 | base64
+          cookieSecret: '?{vaultkv:${cluster:tenant}/${cluster:name}/syn-monitoring/prometheus/oauth2_cookie_secret}'
+          clientSecret: '?{vaultkv:${cluster:tenant}/${cluster:name}/syn-monitoring/prometheus/oauth2_client_secret}'
+
+    addons:
+      - oauth2-proxy
+
+    instances:
+      monitoring:
+        common:
+          namespace: syn-monitoring
+        prometheus:
+          enabled: true
+          config:
+            _oauth2Proxy:
+              ingress: ${pkg.monitoring:prometheus:ingress}
+              proxyEnv:
+                OAUTH2_PROXY_COOKIE_SECRET:
+                  secretKeyRef:
+                    name: oauth2-proxy
+                    key: cookieSecret
+                OAUTH2_PROXY_CLIENT_SECRET:
+                  secretKeyRef:
+                    name: oauth2-proxy
+                    key: clientSecret
+              proxyArgs: ${pkg.monitoring:prometheus:proxy}
+            thanos:
+              baseImage: '${pkg.monitoring:images:thanos:registry}/${pkg.monitoring:images:thanos:repository}'
+              version: ${pkg.monitoring:images:thanos:tag}
+              objectStorageConfig:
+                key: thanos
+                name: thanos-objectstorage
+          overrides:
+            prometheus:
+              spec:
+                retention: "3d"
+                storage:
+                  volumeClaimTemplate:
+                    apiVersion: "v1"
+                    kind: "PersistentVolumeClaim"
+                    spec:
+                      accessModes: ["ReadWriteOnce"]
+                      resources:
+                        requests:
+                          storage: "20Gi"

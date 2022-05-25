@@ -35,11 +35,11 @@ jobs:
           - defaults
     defaults:
       run:
-        working-directory: ${{ env.COMPONENT_NAME }}
+        working-directory: ${{ env.PACKAGE_NAME }}
     steps:
       - uses: actions/checkout@v3
         with:
-          path: ${{ env.COMPONENT_NAME }}
+          path: ${{ env.PACKAGE_NAME }}
       - name: Compile component
         run: make test -e instance=${{ matrix.instance }}
   golden:
@@ -50,10 +50,10 @@ jobs:
           - defaults
     defaults:
       run:
-        working-directory: ${{ env.COMPONENT_NAME }}
+        working-directory: ${{ env.PACKAGE_NAME }}
     steps:
       - uses: actions/checkout@v3
         with:
-          path: ${{ env.COMPONENT_NAME }}
+          path: ${{ env.PACKAGE_NAME }}
       - name: Golden diff
         run: make golden-diff -e instance=${{ matrix.instance }}
