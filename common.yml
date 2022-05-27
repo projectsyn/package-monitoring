@@ -95,3 +95,5 @@ parameters:
                       resources:
                         requests:
                           storage: "20Gi"
+        kubeStateMetrics:
+          enabled: true
