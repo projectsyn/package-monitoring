@@ -1,0 +1,20 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  annotations:
+    source: https://github.com/projectsyn/component-prometheus
+  labels:
+    app.kubernetes.io/component: exporter
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/name: kubestatemetrics-monitoring
+    app.kubernetes.io/part-of: kube-prometheus
+    app.kubernetes.io/version: 2.1.1
+  name: kubestatemetrics-monitoring
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kubestatemetrics-monitoring
+subjects:
+  - kind: ServiceAccount
+    name: kubestatemetrics-monitoring
+    namespace: syn-monitoring
