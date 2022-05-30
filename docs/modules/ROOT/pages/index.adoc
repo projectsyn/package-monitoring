@@ -1,3 +1,6 @@
 = monitoring
 
 monitoring is a Commodore configuration package to manage monitoring.
+This package will generate configuration for the https://github.com/projectsyn/component-prometheus[component-prometheus].
+
+See the xref:references/parameters.adoc[parameters] reference for further details.
