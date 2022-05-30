@@ -3,4 +3,4 @@
 monitoring is a Commodore configuration package to manage monitoring.
 This package will generate configuration for the https://github.com/projectsyn/component-prometheus[component-prometheus].
 
-See the xref:references/parameters.adoc[parameters] reference for further details.
+Follow the xref:how-tos/setup.adoc[setup guide] to enable this package on a cluster or see the xref:references/parameters.adoc[parameters] reference for further details.
