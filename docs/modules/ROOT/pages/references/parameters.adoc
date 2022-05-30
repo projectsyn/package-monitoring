@@ -21,6 +21,8 @@ type:: boolean
 default:: `true`
 
 Whether to deploy an ingress for Prometheus.
+The ingress will be protected by an OAuth2 proxy configured by the field `prometheus.proxy`.
+Prometheus won't be exposed directly.
 
 === `prometheus.ingress.host`
 
@@ -77,7 +79,7 @@ proxy:
   real-client-ip-header: X-Forwarded-For
 ----
 
-A dictionary of arguments to pass to the Oauth2 Proxy.
+A dictionary of arguments to pass to the OAuth2 Proxy.
 
 === `prometheus.thanos.objectStorageConfig`
 
