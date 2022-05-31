@@ -97,3 +97,5 @@ parameters:
                           storage: "20Gi"
         kubeStateMetrics:
           enabled: true
+        kubernetesControlPlane:
+          enabled: true
