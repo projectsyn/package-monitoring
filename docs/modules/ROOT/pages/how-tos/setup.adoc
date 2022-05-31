@@ -1,0 +1,174 @@
+= Setup Cluster Monitoring
+
+In this how-to we look at the base setup of the monitoring stack provided by this package.
+
+This includes
+
+* Deploying a HA Prometheus
+* Exposing Prometheus behind an OAuth2 Proxy
+* Configuring long-term metrics storage using the Thanos sidecar
+* Deploying multiple cluster level metrics exporter
+
+
+To follow this tutorial you need
+
+* A SYN-managed Kubernetes cluster
+* An IdP providing an OIDC interface
+* Access to S3 compatible storage
+
+== Enable the package
+
+Enable the monitoring package by adding the following to the cluster configuration
+
+[source,yaml]
+----
+classes:
+- monitoring.${facts:distribution}
+
+applications:
+- pkg.monitoring
+----
+
+NOTE: As of writing this how-to, only OpenShift4 is explicitly supported.
+You might be able to use this package for other distributions by using the base class `monitoring.common`.
+
+
+== Configure Ingress
+
+By default the package will expose Prometheus through an ingress and will secure this ingress with an OAuth2 proxy.
+
+Choose a domain `PROMETHEUS_DOMAIN` to point to Prometheus and make sure there is a DNS entry that points to the cluster.
+
+=== Setup OIDC client
+. Login to the Keycloak instances admin console
+. Create a new client using `openid-connect` protocol
+. Configure the client with the following values
++
+[horizontal]
+Access Type:: confidential
+Valid Redirect URIs:: `https://{{ PROMETHEUS_DOMAIN }}/oauth2/callback`
+
+. Configure the audience claim
++
+Navigate to the `Mappers` tab.
+Create a new mapper with the following values:
++
+[horizontal]
+Name:: static audience
+Mapper Type:: Audience
+Included Client Audience:: CLIENT_NAME (from the previous step)
+Included Custom Audience:: CLIENT_NAME (from the previous step)
+Add to ID token:: off
+Add to access token:: on
+
+. Copy the client secret
+Navigate to the `Credentials` tab.
+Copy the value from the _Secret_ field.
+
+NOTE: This guide assumes that you use Keycloak as your IdP.
+However, the package is compatible with any OIDC provider and the instructions should be similar for other IdPs.
+
+
+=== Configure Ingress and Proxy
+
+. Add client and cookie secret to vault
++
+[source,yaml]
+----
+parent="clusters/kv/${TENANT_ID}/${CLUSTER_ID}"
+
+cookie_secret=$(dd if=/dev/urandom bs=1 count=16 | base64)
+client_secret=CLIENT_NAME
+
+# Use the 'put' subcommand to add a new secret
+vault kv put "${parent}/syn-monitoring/prometheus" oauth2_cookie_secret=${cookie_secret} oauth2_client_secret=${client_secret}
+----
+
+. Add the ingress and proxy configuration to your cluster's configuration
++
+[source,yaml]
+----
+parameters:
+  pkg.monitoring:
+    prometheus:
+      ingress: <1>
+        host: "{{ PROMETHEUS_DOMAIN }}"
+      proxy: <2>
+        provider-display-name: "Example Provider"
+        client-id: "{{ CLIENT_NAME }}"
+        email-domain: example.com <3>
+        oidc-issuer-url: https://id.example.com/auth/realms/REALM <4>
+----
+<1> You can add annotations to the created ingress using the `annotations` key.
+By default the package will add the annotation `cert-manager.io/cluster-issuer: letsencrypt-production`.
+<2> Check the https://oauth2-proxy.github.io/oauth2-proxy/docs/[Oauth2 Proxy docs] for all possible configuration options.
+<3> Optional email domain to restrict the users to.
+Can be set to `*` to allow all domains.
+<4> The URL of the IDP instance.
+Replace `REALM` with the realm name.
+
+== Setup Thanos Object Store
+
+For long-term metrics storage this package uses the Thanos sidecar to ship metrics to S3 compatible storage.
+
+. Create a bucket from a S3 compatible storage provider.
++
+NOTE: The S3 bucket can be located anywhere as long as it's accessible from the target cluster.
+It's however advisable to keep the bucket close to where it will be queried.
+
+. Add access key and secret key to vault
++
+[source,yaml]
+----
+parent="clusters/kv/${TENANT_ID}/${CLUSTER_ID}"
+
+access_key=ACCESS_KEY
+secret_key=SECRET_KEY
+
+# Use the 'patch' subcommand to add to existing secret
+vault kv patch "${parent}/syn-monitoring/prometheus" s3_access_key=${access_key} s3_secret_key=${secret_key}
+----
+
+. Add the object storage configuration to your cluster's configuration
++
+[source,yaml]
+----
+parameters:
+  pkg.monitoring:
+    prometheus:
+      thanos:
+        objectStorageConfig:
+          bucket: "{{ BUCKET_NAME }}"
+          endpoint: "{{ STORAGE_ENDPOINT}}"
+          region: "{{ STORAGE_REGION }}"
+----
+
+
+== Example
+
+Your cluster config should now look similar to the example below.
+
+[source,yaml]
+----
+classes:
+- monitoring.${facts:distribution}
+
+applications:
+- pkg.monitoring
+
+parameters:
+  pkg.monitoring:
+    prometheus:
+      ingress:
+        host: prometheus.example.com
+      proxy:
+        provider-display-name: "Example Provider"
+        client-id: "example-prometheus-${cluster:name}"
+        email-domain: example.com
+        oidc-issuer-url: https://id.example.com/auth/realms/main
+      thanos:
+        objectStorageConfig:
+          bucket: "${cluster:name}-thanos"
+          endpoint: objects.example.com
+          region: eu-west
+----
