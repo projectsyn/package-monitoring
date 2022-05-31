@@ -14,10 +14,10 @@ spec:
     - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
       interval: 15s
       port: metrics
-  jobLabel: app.kubernetes.io/name
+      scheme: https
+      tlsConfig:
+        insecureSkipVerify: true
   namespaceSelector:
     matchNames:
       - openshift-dns
-  selector:
-    matchLabels:
-      k8s-app: kube-dns
+  selector: {}
