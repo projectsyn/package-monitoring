@@ -113,8 +113,8 @@ For long-term metrics storage this package uses the Thanos sidecar to ship metri
 
 . Create a bucket from a S3 compatible storage provider.
 +
-NOTE: The S3 bucket can located anywhere as long as it's accessible from the target cluster.
-It's however advisable to keep the bucket close to where it will be queried
+NOTE: The S3 bucket can be located anywhere as long as it's accessible from the target cluster.
+It's however advisable to keep the bucket close to where it will be queried.
 
 . Add access key and secret key to vault
 +
