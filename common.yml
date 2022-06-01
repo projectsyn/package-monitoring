@@ -32,7 +32,7 @@ parameters:
   components:
     prometheus:
       url: https://github.com/projectsyn/component-prometheus.git
-      version: ocp-specific-servicemonitors
+      version: v1.1.0
 
   prometheus:
     namespaces:
