@@ -3,6 +3,10 @@ classes:
 
 parameters:
   prometheus:
+    namespaces:
+      syn-monitoring:
+        annotations:
+          openshift.io/node-selector: ""
     prometheusOperator:
       installCRDs: false
     addons:

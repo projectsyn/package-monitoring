@@ -32,7 +32,7 @@ parameters:
   components:
     prometheus:
       url: https://github.com/projectsyn/component-prometheus.git
-      version: v1.1.0
+      version: v1.2.0
 
   prometheus:
     namespaces:
@@ -98,4 +98,6 @@ parameters:
         kubeStateMetrics:
           enabled: true
         kubernetesControlPlane:
+          enabled: true
+        nodeExporter:
           enabled: true
