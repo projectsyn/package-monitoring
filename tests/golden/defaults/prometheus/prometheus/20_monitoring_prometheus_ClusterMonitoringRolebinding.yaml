@@ -1,0 +1,19 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  annotations:
+    source: https://github.com/projectsyn/component-prometheus
+  labels:
+    app.kubernetes.io/managed-by: commodore
+    app.kubernetes.io/part-of: syn
+    name: syn-cluster-monitoring-monitoring
+  name: syn-cluster-monitoring-monitoring
+  namespace: syn-monitoring
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: syn-cluster-monitoring-monitoring
+subjects:
+  - kind: ServiceAccount
+    name: prometheus-monitoring
+    namespace: syn-monitoring

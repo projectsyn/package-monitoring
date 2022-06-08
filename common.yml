@@ -58,6 +58,7 @@ parameters:
       - oauth2-proxy
       - cluster-monitoring
 
+    defaultInstance: monitoring
     instances:
       monitoring:
         common:

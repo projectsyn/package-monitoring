@@ -83,19 +83,27 @@ spec:
       app.kubernetes.io/name: prometheus
       app.kubernetes.io/part-of: kube-prometheus
       app.kubernetes.io/version: 2.29.1
-  podMonitorNamespaceSelector: {}
+  podMonitorNamespaceSelector:
+    matchLabels:
+      monitoring.syn.tools/monitoring: 'true'
   podMonitorSelector: {}
-  probeNamespaceSelector: {}
+  probeNamespaceSelector:
+    matchLabels:
+      monitoring.syn.tools/monitoring: 'true'
   probeSelector: {}
   replicas: 2
   resources:
     requests:
       memory: 400Mi
   retention: 3d
-  ruleNamespaceSelector: {}
+  ruleNamespaceSelector:
+    matchLabels:
+      monitoring.syn.tools/monitoring: 'true'
   ruleSelector: {}
   serviceAccountName: prometheus-monitoring
-  serviceMonitorNamespaceSelector: {}
+  serviceMonitorNamespaceSelector:
+    matchLabels:
+      monitoring.syn.tools/monitoring: 'true'
   serviceMonitorSelector: {}
   storage:
     volumeClaimTemplate:
