@@ -4,5 +4,6 @@ metadata:
   annotations:
     openshift.io/node-selector: ''
   labels:
+    monitoring.syn.tools/monitoring: 'true'
     name: syn-monitoring
   name: syn-monitoring

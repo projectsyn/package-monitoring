@@ -44,7 +44,7 @@ spec:
             secretKeyRef:
               key: cookieSecret
               name: oauth2-proxy
-      image: quay.io/oauth2-proxy/oauth2-proxy:v7.2.1
+      image: quay.io/oauth2-proxy/oauth2-proxy:v7.3.0
       name: oauth2-proxy
       resources:
         limits:
@@ -83,19 +83,27 @@ spec:
       app.kubernetes.io/name: prometheus
       app.kubernetes.io/part-of: kube-prometheus
       app.kubernetes.io/version: 2.29.1
-  podMonitorNamespaceSelector: {}
+  podMonitorNamespaceSelector:
+    matchLabels:
+      monitoring.syn.tools/monitoring: 'true'
   podMonitorSelector: {}
-  probeNamespaceSelector: {}
+  probeNamespaceSelector:
+    matchLabels:
+      monitoring.syn.tools/monitoring: 'true'
   probeSelector: {}
   replicas: 2
   resources:
     requests:
       memory: 400Mi
   retention: 3d
-  ruleNamespaceSelector: {}
+  ruleNamespaceSelector:
+    matchLabels:
+      monitoring.syn.tools/monitoring: 'true'
   ruleSelector: {}
   serviceAccountName: prometheus-monitoring
-  serviceMonitorNamespaceSelector: {}
+  serviceMonitorNamespaceSelector:
+    matchLabels:
+      monitoring.syn.tools/monitoring: 'true'
   serviceMonitorSelector: {}
   storage:
     volumeClaimTemplate:
