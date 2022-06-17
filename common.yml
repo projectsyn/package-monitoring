@@ -32,7 +32,7 @@ parameters:
   components:
     prometheus:
       url: https://github.com/projectsyn/component-prometheus.git
-      version: feat/cluster-monitoring
+      version: v1.3.0
 
   prometheus:
     namespaces:
