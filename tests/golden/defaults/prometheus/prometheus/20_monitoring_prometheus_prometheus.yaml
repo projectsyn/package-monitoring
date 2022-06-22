@@ -86,11 +86,23 @@ spec:
   podMonitorNamespaceSelector:
     matchLabels:
       monitoring.syn.tools/monitoring: 'true'
-  podMonitorSelector: {}
+  podMonitorSelector:
+    matchExpressions:
+      - key: monitoring.syn.tools/enabled
+        operator: NotIn
+        values:
+          - 'false'
+          - 'False'
   probeNamespaceSelector:
     matchLabels:
       monitoring.syn.tools/monitoring: 'true'
-  probeSelector: {}
+  probeSelector:
+    matchExpressions:
+      - key: monitoring.syn.tools/enabled
+        operator: NotIn
+        values:
+          - 'false'
+          - 'False'
   replicas: 2
   resources:
     requests:
@@ -99,12 +111,24 @@ spec:
   ruleNamespaceSelector:
     matchLabels:
       monitoring.syn.tools/monitoring: 'true'
-  ruleSelector: {}
+  ruleSelector:
+    matchExpressions:
+      - key: monitoring.syn.tools/enabled
+        operator: In
+        values:
+          - 'true'
+          - 'True'
   serviceAccountName: prometheus-monitoring
   serviceMonitorNamespaceSelector:
     matchLabels:
       monitoring.syn.tools/monitoring: 'true'
-  serviceMonitorSelector: {}
+  serviceMonitorSelector:
+    matchExpressions:
+      - key: monitoring.syn.tools/enabled
+        operator: NotIn
+        values:
+          - 'false'
+          - 'False'
   storage:
     volumeClaimTemplate:
       apiVersion: v1
