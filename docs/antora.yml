@@ -1,4 +1,4 @@
-name: monitoring
+name: package-monitoring
 title: monitoring
 version: master
 start_page: ROOT:index.adoc
