@@ -1,6 +1,6 @@
 {
   "template": "https://github.com/projectsyn/commodore-config-package-template.git",
-  "commit": "7d3ac01e101aab649efdb8f944f622faee186175",
+  "commit": "c5f5dc6260c7aeeb0e59b8ef6a217bb6d98a4fa3",
   "checkout": null,
   "context": {
     "cookiecutter": {
@@ -11,8 +11,8 @@
       "copyright_holder": "VSHN AG <info@vshn.ch>",
       "copyright_year": "2022",
       "github_owner": "projectsyn",
-      "__github_name": "package-{{ cookiecutter.slug }}",
-      "__github_url": "https://github.com/{{ cookiecutter.github_owner }}/{{ cookiecutter.__github_name }}",
+      "__github_name": "package-monitoring",
+      "__github_url": "https://github.com/projectsyn/package-monitoring",
       "_template": "https://github.com/projectsyn/commodore-config-package-template.git"
     }
   },
