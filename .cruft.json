@@ -1,6 +1,6 @@
 {
   "template": "https://github.com/projectsyn/commodore-config-package-template.git",
-  "commit": "843740fe8b7ffe00e5401ca3c69bf087e6ba306c",
+  "commit": "0c08a3c62ef0d2b33ce7c20c9b7bb9f2dfede594",
   "checkout": null,
   "context": {
     "cookiecutter": {
@@ -8,6 +8,12 @@
       "slug": "monitoring",
       "test_cases": "defaults",
       "add_golden": "y",
+      "automerge_patch": "y",
+      "automerge_patch_v0": "n",
+      "automerge_patch_regexp_blocklist": "",
+      "automerge_patch_v0_regexp_allowlist": "",
+      "automerge_minor_regexp_allowlist": "",
+      "auto_release": "y",
       "copyright_holder": "VSHN AG <info@vshn.ch>",
       "copyright_year": "2022",
       "github_owner": "projectsyn",
